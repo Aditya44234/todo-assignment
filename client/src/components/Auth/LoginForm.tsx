@@ -3,16 +3,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { loginSchema } from "../../features/auth/zodSchemas";
-
 import type { LoginFormValues } from "../../features/auth/zodSchemas";
 import { useLogin } from "../../features/auth/hooks";
 import { useAuthStore } from "../../features/auth/store";
 
+// Ensure this is ONLY used inside a function component and with compatible React versions
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
+
+  // Zustand store usage is correct here
   const setAuth = useAuthStore((s) => s.setAuth);
+
+  // React Query mutation hook (correct usage)
   const loginMutation = useLogin();
 
+  // RHF form setup
   const {
     register,
     handleSubmit,
@@ -21,13 +26,15 @@ const LoginForm: React.FC = () => {
     resolver: zodResolver(loginSchema),
   });
 
+  // Submit: call backend, set auth state, navigate
   const onSubmit = (data: LoginFormValues) => {
     loginMutation.mutate(data, {
       onSuccess: (res) => {
         setAuth({ user: res.user, token: res.token });
-        navigate("/todos");
       },
+      // Handle errors globally if needed
     });
+    navigate("/todos");
   };
 
   return (
@@ -66,10 +73,10 @@ const LoginForm: React.FC = () => {
           Forgot Password?
         </Link>
       </div>
-      {/* Error from backend */}
+      {/* Backend Error */}
       {loginMutation.isError && (
         <p className="text-red-500 text-sm">
-          {(loginMutation.error as Error).message || "Login failed"}
+          {(loginMutation.error as Error)?.message || "Login failed"}
         </p>
       )}
       {/* Submit Button */}

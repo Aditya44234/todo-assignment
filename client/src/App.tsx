@@ -3,6 +3,7 @@ import SignupForm from "./components/Auth/SignupForm";
 import LoginForm from "./components/Auth/LoginForm";
 import ForgotPasswordForm from "./components/Auth/ForgotPasswordForm";
 import ResetPasswordForm from "./components/Auth/ResetPasswordForm";
+import TodoList from "./components/Todos/TodoList";
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
             path="/reset-password/:token"
             element={<ResetPasswordForm />}
           />
-          {/* Add more routes later: /todos, etc. */}
+          <Route path="/todos" element={<TodoList />} />
         </Routes>
       </main>
     </BrowserRouter>

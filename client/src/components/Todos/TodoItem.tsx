@@ -1,5 +1,7 @@
 import React from "react";
+import { useTodoStore } from "../../features/todos/store";
 
+useTodoStore
 export type Todo = {
   id: string;
   text: string;
