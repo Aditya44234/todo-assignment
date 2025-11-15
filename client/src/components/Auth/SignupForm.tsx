@@ -21,97 +21,126 @@ const SignupForm: React.FC = () => {
   });
 
   const onSubmit = async (data: SignupFormValues) => {
-    // Remove confirmPassword before sending (already handled inside API, so just pass all data)
     signupMutation.mutate(data, {
       onSuccess: (res) => {
-        // Store user/token in Zustand
-        setAuth({ user: res.user, token: res.token });
-        // Redirect to /todos or other protected page
-        navigate("/todos");
+        setAuth({  token: res.token });
+        navigate("/login");
       },
       onError: (error: any) => {
-        // you can handle/display errors here if needed
         console.log("Error signup :- ", error);
       },
     });
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="max-w-md mx-auto p-8 bg-white shadow rounded space-y-6"
-    >
-      <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
-      <div>
-        <label className="block mb-1">Name</label>
-        <input
-          type="text"
-          {...register("name")}
-          className="input input-bordered w-full"
-        />
-        {errors.name && (
-          <p className="text-red-500 text-sm">{errors.name.message}</p>
-        )}
-      </div>
-      <div>
-        <label className="block mb-1">Email</label>
-        <input
-          type="email"
-          {...register("email")}
-          className="input input-bordered w-full"
-        />
-        {errors.email && (
-          <p className="text-red-500 text-sm">{errors.email.message}</p>
-        )}
-      </div>
-      <div>
-        <label className="block mb-1">Password</label>
-        <input
-          type="password"
-          {...register("password")}
-          className="input input-bordered w-full"
-        />
-        {errors.password && (
-          <p className="text-red-500 text-sm">{errors.password.message}</p>
-        )}
-      </div>
-      <div>
-        <label className="block mb-1">Confirm Password</label>
-        <input
-          type="password"
-          {...register("confirmPassword")}
-          className="input input-bordered w-full"
-        />
-        {errors.confirmPassword && (
-          <p className="text-red-500 text-sm">
-            {errors.confirmPassword.message}
-          </p>
-        )}
-      </div>
-      {/* Error display */}
-      {signupMutation.isError && (
-        <p className="text-red-500 text-sm">
-          {(signupMutation.error as Error).message || "Signup failed"}
-        </p>
-      )}
-      {/* Success display (usually instant redirect) */}
-      {/* <p className="text-green-600 text-sm">Signup successful!</p> */}
-      <button
-        type="submit"
-        className="btn btn-primary w-full"
-        disabled={signupMutation.isPending}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-100">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="w-full max-w-md p-8 bg-white/90 shadow-xl rounded-xl space-y-8 border border-slate-200"
       >
-        {signupMutation.isPending ? "Signing up..." : "Sign Up"}
-      </button>
-      <div className="flex justify-center text-sm mt-4">
-        <span>
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
-            Log In
-          </Link>
-        </span>
-      </div>
-    </form>
+        <h2 className="text-3xl font-extrabold text-center text-slate-800 mb-4 tracking-tight">
+          Create Your Account
+        </h2>
+        {/* Name Field */}
+        <div>
+          <label className="block mb-1 font-medium text-slate-600">Name</label>
+          <input
+            type="text"
+            autoComplete="name"
+            {...register("name")}
+            className={`input input-bordered w-full ${
+              errors.name ? "border-red-400" : ""
+            }`}
+            placeholder="Your full name"
+          />
+          {errors.name && (
+            <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+          )}
+        </div>
+        {/* Email Field */}
+        <div>
+          <label className="block mb-1 font-medium text-slate-600">Email</label>
+          <input
+            type="email"
+            autoComplete="email"
+            {...register("email")}
+            className={`input input-bordered w-full ${
+              errors.email ? "border-red-400" : ""
+            }`}
+            placeholder="you@example.com"
+          />
+          {errors.email && (
+            <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+          )}
+        </div>
+        {/* Password Field */}
+        <div>
+          <label className="block mb-1 font-medium text-slate-600">
+            Password
+          </label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            {...register("password")}
+            className={`input input-bordered w-full ${
+              errors.password ? "border-red-400" : ""
+            }`}
+            placeholder="••••••••"
+          />
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+        {/* Confirm Password */}
+        <div>
+          <label className="block mb-1 font-medium text-slate-600">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            {...register("confirmPassword")}
+            className={`input input-bordered w-full ${
+              errors.confirmPassword ? "border-red-400" : ""
+            }`}
+            placeholder="Re-type Password"
+          />
+          {errors.confirmPassword && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.confirmPassword.message}
+            </p>
+          )}
+        </div>
+        {/* Backend Error */}
+        {signupMutation.isError && (
+          <div className="bg-red-50 border border-red-200 rounded p-3 text-red-700 text-sm">
+            {(signupMutation.error as Error).message || "Signup failed"}
+          </div>
+        )}
+        {/* Signup Button */}
+        <button
+          type="submit"
+          className="btn btn-primary w-full py-2 text-lg font-semibold shadow-md bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 transition-all"
+          disabled={signupMutation.isPending}
+        >
+          {signupMutation.isPending ? "Signing up..." : "Sign Up"}
+        </button>
+        {/* Login CTA */}
+        <div className="flex justify-center text-sm mt-4">
+          <span>
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="text-indigo-600 font-semibold hover:underline"
+            >
+              Log In
+            </Link>
+          </span>
+        </div>
+      </form>
+    </div>
   );
 };
 

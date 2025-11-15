@@ -6,17 +6,28 @@ import type {
     ForgotPasswordFormValues,
     ResetPasswordFormValues,
 } from "./zodSchemas";
+import { useAuthStore } from "./store";
 
 // Signup hook
 export const useSignup = () =>
     useMutation({
         mutationFn: (data: SignupFormValues) => signup(data),
+        onSuccess: (data) => {
+            useAuthStore.getState().setAuth(data);
+            localStorage.setItem("token", data.token);
+
+        },
     });
 
 // Login hook
 export const useLogin = () =>
     useMutation({
         mutationFn: (data: LoginFormValues) => login(data),
+        onSuccess: (data) => {
+            useAuthStore.getState().setAuth(data);
+            localStorage.setItem("token", data.token);
+            console.log("Token:-",data.token)
+        },
     });
 
 // Forgot password hook

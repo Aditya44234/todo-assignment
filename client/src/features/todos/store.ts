@@ -1,8 +1,10 @@
 import { create } from "zustand";
 
+// Match backend/normalized frontend
 export type Todo = {
     id: string;
-    text: string;
+    title: string;
+    description?: string;
     completed: boolean;
 };
 
@@ -35,6 +37,3 @@ export const useTodoStore = create<TodoState>((set) => ({
             ),
         })),
 }));
-
-
-

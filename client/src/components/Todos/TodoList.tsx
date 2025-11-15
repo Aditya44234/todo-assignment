@@ -19,12 +19,22 @@ const TodoList: React.FC = () => {
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 
   // Add new or edit
-  const handleSubmit = ({ text }: { text: string }) => {
+  const handleSubmit = ({
+    title,
+    description,
+  }: {
+    title: string;
+    description?: string;
+  }) => {
     if (editingTodo) {
-      updateTodoMutation.mutate({ ...editingTodo, text });
+      updateTodoMutation.mutate({
+        ...editingTodo,
+        title,
+        description,
+      });
       setEditingTodo(null);
     } else {
-      addTodoMutation.mutate(text);
+      addTodoMutation.mutate({ title, description });
     }
   };
 
@@ -32,7 +42,10 @@ const TodoList: React.FC = () => {
   const handleMarkDone = (id: string) => {
     const todo = todos.find((t) => t.id === id);
     if (todo) {
-      updateTodoMutation.mutate({ ...todo, completed: !todo.completed });
+      updateTodoMutation.mutate({
+        ...todo,
+        completed: !todo.completed,
+      });
     }
   };
 
@@ -46,34 +59,54 @@ const TodoList: React.FC = () => {
   const handleEdit = (todo: Todo) => setEditingTodo(todo);
 
   return (
-    <div className="max-w-xl mx-auto p-4">
-      <h2 className="text-2xl font-semibold mb-4">Your Todos</h2>
-      {/* TodoForm handles add/edit */}
-      <TodoForm
-        initialText={editingTodo?.text ?? ""}
-        onSubmit={handleSubmit}
-        isLoading={addTodoMutation.isPending || updateTodoMutation.isPending}
-      />
-
-      {/* Error state */}
-      {isError && <p className="text-red-500">Failed to load todos.</p>}
-
-      {/* Loading */}
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : todos.length === 0 ? (
-        <p className="text-gray-500">No todos found.</p>
-      ) : (
-        todos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            todo={todo}
-            onMarkDone={handleMarkDone}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
+    <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-indigo-50 via-blue-50 to-pink-50 py-8 px-2">
+      <div className="w-full max-w-2xl p-6 bg-white/95 rounded-2xl border border-slate-200 shadow-lg">
+        <h2 className="text-3xl font-bold mb-6 text-center text-indigo-700 tracking-tight">
+          📝 Your Todos
+        </h2>
+        {/* TodoForm handles add/edit */}
+        <div className="mb-4">
+          <TodoForm
+            initialTitle={editingTodo?.title ?? ""}
+            initialDescription={editingTodo?.description ?? ""}
+            onSubmit={handleSubmit}
+            isLoading={
+              addTodoMutation.isPending || updateTodoMutation.isPending
+            }
           />
-        ))
-      )}
+        </div>
+
+        {/* Error state */}
+        {isError && (
+          <div className="bg-red-50 border border-red-200 rounded p-3 text-red-700 text-center mb-4 text-sm">
+            Failed to load todos.
+          </div>
+        )}
+
+        {/* Loading */}
+        {isLoading ? (
+          <p className="text-center text-slate-400 my-6 text-lg">Loading...</p>
+        ) : todos.length === 0 ? (
+          <div className="p-8 text-center text-gray-400 text-lg font-medium">
+            You have no todos yet!
+            <div className="text-xs font-normal mt-2 text-slate-400">
+              Add your first todo above.
+            </div>
+          </div>
+        ) : (
+          <div>
+            {todos.map((todo) => (
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                onMarkDone={handleMarkDone}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

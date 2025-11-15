@@ -14,7 +14,8 @@ export const useTodos = () => {
 export const useAddTodo = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (text: string) => addTodo(text),
+        mutationFn: (payload: { title: string; description?: string }) =>
+            addTodo(payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["todos"] });
         },
