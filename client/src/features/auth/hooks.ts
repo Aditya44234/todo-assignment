@@ -26,7 +26,6 @@ export const useLogin = () =>
         onSuccess: (data) => {
             useAuthStore.getState().setAuth(data);
             localStorage.setItem("token", data.token);
-            console.log("Token:-",data.token)
         },
     });
 
