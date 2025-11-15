@@ -8,8 +8,13 @@ import { errorMiddleware } from './middleware/errorMiddleware';
 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://todo-assignment-brown.vercel.app/",
+  credentials: true
+}));
 app.use(express.json());
+
+
 
 app.get("/",(req:Request,res:Response)=>{
     res.send("Welcome to server")
