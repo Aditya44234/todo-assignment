@@ -11,16 +11,16 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
     try {
         authSchemas.signup.parse(req.body);
 
-        const { email, password } = req.body;
+        const {name, email, password } = req.body;
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(409).json({ error: "Email already exists" });
 
         const hash = await bcrypt.hash(password, 10);
-        const user = await User.create({ email, password: hash });
+        const user = await User.create({name, email, password: hash });
 
         res.status(201).json({
             message: "User created",
-            user: { email: user.email, id: user._id }
+            user: {name:name, email: user.email, id: user._id }
         });
     } catch (error: any) {
         logger("error", error.message, error.stack, req);
@@ -55,12 +55,12 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 // Forgot Password (stub for now)
 export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
-    // TODO: Implement email sending and token storage
+    // TODO: Implement email sending and token storage, i will ompletment them later bro
     res.json({ message: "Forgot password flow to be implemented." });
 };
 
 // Reset Password (stub for now)
 export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
-    // TODO: Implement token verification and password update
+    // TODO: Implement token verification and password update. i will impletment thos later broo
     res.json({ message: "Reset password flow to be implemented." });
 };
