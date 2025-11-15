@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import TodoItem from "./TodoItem";
 import TodoForm from "./TodoForm";
 import type { Todo } from "./TodoItem";
@@ -8,17 +9,27 @@ import {
   useUpdateTodo,
   useDeleteTodo,
 } from "../../features/todos/hooks";
+import { useAuthStore } from "../../features/auth/store";  
 
 const TodoList: React.FC = () => {
   const { data: todos = [], isLoading, isError } = useTodos();
   const addTodoMutation = useAddTodo();
   const updateTodoMutation = useUpdateTodo();
   const deleteTodoMutation = useDeleteTodo();
+  const token = useAuthStore((s) => s.token);
+  const navigate = useNavigate();
 
-  // For editing a todo
+  // Redirect to login if NOT authenticated
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
+
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 
-  // Add new or edit
+  // ...all handlers as before...
+
   const handleSubmit = ({
     title,
     description,
@@ -38,7 +49,6 @@ const TodoList: React.FC = () => {
     }
   };
 
-  // Mark as done/undone
   const handleMarkDone = (id: string) => {
     const todo = todos.find((t) => t.id === id);
     if (todo) {
@@ -49,13 +59,11 @@ const TodoList: React.FC = () => {
     }
   };
 
-  // Delete
   const handleDelete = (id: string) => {
     deleteTodoMutation.mutate(id);
     if (editingTodo?.id === id) setEditingTodo(null);
   };
 
-  // Edit
   const handleEdit = (todo: Todo) => setEditingTodo(todo);
 
   return (
